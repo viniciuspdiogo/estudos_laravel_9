@@ -6,6 +6,10 @@
         <h1>Comentários do Usuário {{$user->name}}            
             (<a href="{{route('comments.create',$user->id)}}">+</a>)
         </h1>
+        <form action="{{ route('comments.index', $user->id) }}" method="get">
+            <input type="text" name="search" placeholder="Pesquisar">
+            <button type="submit">Pesquisar</button>
+        </form>
         <ul> 
             @foreach ($comments as $comment)
                 <li>
