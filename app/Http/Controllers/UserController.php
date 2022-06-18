@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdateUserFormRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -42,17 +43,17 @@ class UserController extends Controller
         
         $data = $request->all();
         $data['password'] = bcrypt($request->passwoord);
+        
+        if($request->image){
+            // $extension = $request->image->getClientOriginalExtension();
+            // $data['image'] = $request->image->storeAs('users',now() . ".{$extension}");
+
+            $data['image'] = $request->image->store('users');
+        }
+
         $user = $this->model->create($data);
-
-
-        //return redirect()->route('users.index');
-
-        return redirect()->route('users.show',$user->id);
-        // $user = new User;
-        // $user->name = $request->name;
-        // $user->email = $request->email;
-        // $user->password = $request->password;
-        // $user->save();
+        return redirect()->route('users.index');
+    
     }
     
     public function edit($id){
@@ -64,18 +65,27 @@ class UserController extends Controller
 
     public function update(StoreUpdateUserFormRequest $request, $id){
 
-
         if(!$user = $this->model->find($id))
             return redirect()->route('users.index');
 
             $data = $request->only('name','email');
+            
             if($request->password)
                 $data['password'] = bcrypt($request->password);
+
+
+            if($request->image){
+                
+                if($user->image && Storage::exists($user->image)){
+                    Storage::delete($user->image);
+                }
+
+                $data['image'] = $request->image->store('users');
+            }
 
             $user->update($data);
         
             return redirect()->route('users.index');
-        //return view('users.edit', compact('user'));
     }
 
     public function destroy($id){
