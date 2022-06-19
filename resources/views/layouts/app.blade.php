@@ -9,6 +9,11 @@
 </head>
 <body class="bg-gray-50">
     <div class="app">
+        <form action="{{ route('logout')}}" method="post">
+            @csrf
+            <button type="submit" style="padding: 5px;border: 1px solid #333;background: transparent;border-radius: 5px;margin: 10px;color: #00F;">
+                Logout</button>
+        </form>
         @yield('content')
     </div>
 </body>
